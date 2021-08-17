@@ -24,7 +24,15 @@ def index(request):
 		"joshua_players": Player.objects.filter(first_name__contains='joshua'),
 		"exclude_joshua_from_coopers": Player.objects.filter(last_name__contains="cooper").exclude(first_name__contains="joshua"),
 		"alexanderorwyatt": Player.objects.filter(first_name="Alexander") | Player.objects.filter(first_name="Wyatt"),
-
+		#Sports ORM II
+		"asc_teams": Team.objects.filter(league__name="Atlantic Soccer Conference"),
+		"bp_players": Player.objects.filter(curr_team__team_name="Penguins") , 
+		#  se puede agregar la ubicacion, pero en esta situación basta con penguins curr_team__location="Boston"
+		"icbc_players": Player.objects.filter(curr_team__league__name="International Collegiate Baseball Conference"),
+		"icbc_players": Player.objects.filter(curr_team__league__name="International Collegiate Baseball Conference"),
+		"acafl_players": Player.objects.filter(curr_team__league__name="American Conference of Amateur Football",last_name="Lopez"),
+		"f_players": Player.objects.filter(curr_team__league__sport="Football"),
+		"s_teams":Team.objects.filter(curr_players__first_name="Sofia"),
 	}
 	return render(request, "leagues/index.html", context)
 
