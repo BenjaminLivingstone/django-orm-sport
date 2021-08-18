@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import League, Team, Player
-
+from django.db.models import Count
 from . import team_maker
 
 def index(request):
@@ -24,15 +24,24 @@ def index(request):
 		"joshua_players": Player.objects.filter(first_name__contains='joshua'),
 		"exclude_joshua_from_coopers": Player.objects.filter(last_name__contains="cooper").exclude(first_name__contains="joshua"),
 		"alexanderorwyatt": Player.objects.filter(first_name="Alexander") | Player.objects.filter(first_name="Wyatt"),
+		
 		#Sports ORM II
 		"asc_teams": Team.objects.filter(league__name="Atlantic Soccer Conference"),
-		"bp_players": Player.objects.filter(curr_team__team_name="Penguins") , 
-		#  se puede agregar la ubicacion, pero en esta situación basta con penguins curr_team__location="Boston"
+		"bp_players": Player.objects.filter(curr_team__team_name="Penguins", curr_team__location="Boston") , 
 		"icbc_players": Player.objects.filter(curr_team__league__name="International Collegiate Baseball Conference"),
 		"icbc_players": Player.objects.filter(curr_team__league__name="International Collegiate Baseball Conference"),
 		"acafl_players": Player.objects.filter(curr_team__league__name="American Conference of Amateur Football",last_name="Lopez"),
 		"f_players": Player.objects.filter(curr_team__league__sport="Football"),
-		"s_teams":Team.objects.filter(curr_players__first_name="Sofia"),
+		"s_teams": Team.objects.filter(curr_players__first_name="Sophia"),
+		"s_teams": Team.objects.filter(curr_players__first_name="Sophia"),
+		"flores_players": Player.objects.filter(last_name__contains="Flores").exclude(curr_team__team_name="Roughriders",curr_team__location="Washington"),
+		"se_teams": Team.objects.filter(all_players__first_name = "Samuel", all_players__last_name = "Evans"),
+		"tc_players": Player.objects.filter(all_teams__team_name = "Tiger-Cats", all_teams__location = "Manitoba"),
+		"wv_players": Player.objects.filter(all_teams__team_name = "Vikings", all_teams__location = "Wichita").exclude(curr_team__team_name = "Vikings", curr_team__location = "Wichita"),
+        "jg_teams": Team.objects.filter(all_players__first_name = "Jacob", all_players__last_name = "Gray").exclude(team_name = "Colts", location = "Oregon"),
+        "j_players": Player.objects.filter(first_name = "Joshua", all_teams__league__name = "Atlantic Federation of Amateur Baseball Players"),
+        "12_teams": Team.objects.annotate(x = Count('all_players')).filter(x__gt=11),
+        "p_players": Player.objects.annotate(x = Count('all_teams')).order_by('-x'),
 	}
 	return render(request, "leagues/index.html", context)
 
